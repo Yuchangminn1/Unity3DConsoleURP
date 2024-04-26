@@ -54,6 +54,7 @@ namespace SF_CableSpreader
         public GameObject EndPoint4;
         public GameObject CableMesh4;
 
+        private bool propertiesChanged = false;
 
 
 #if UNITY_EDITOR
@@ -74,7 +75,6 @@ namespace SF_CableSpreader
 
         private float previoustension = 1f;
 
-        private bool propertiesChanged;
         private void OnEnable()
         {
             EditorApplication.update += UpdateInEditor;
