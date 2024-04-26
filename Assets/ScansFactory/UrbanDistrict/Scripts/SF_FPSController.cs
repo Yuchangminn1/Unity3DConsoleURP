@@ -17,6 +17,9 @@ namespace SF_FPSController
         public float lookSpeed = 2.0f;
         public float lookXLimit = 45.0f;
 
+        Animator animator;
+
+
         CharacterController characterController;
         Vector3 moveDirection = Vector3.zero;
         float rotationX = 0;
@@ -24,10 +27,15 @@ namespace SF_FPSController
         [HideInInspector]
         public bool canMove = true;
 
+        public bool isJump = false;
+
+        float jumptime = 0.1f;
+        float jumptime22 = 0.1f;
+
         void Start()
         {
             characterController = GetComponent<CharacterController>();
-
+            animator = GetComponentInChildren<Animator>();
             // Lock cursor
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -42,12 +50,18 @@ namespace SF_FPSController
             bool isRunning = Input.GetKey(KeyCode.LeftShift);
             float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
             float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Horizontal") : 0;
+            animator.SetFloat("InputX", curSpeedY);
+            animator.SetFloat("InputY", curSpeedX);
+
             float movementDirectionY = moveDirection.y;
             moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
             if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
             {
+                isJump = true;
+                animator.SetBool("Jump", isJump);
                 moveDirection.y = jumpSpeed;
+                jumptime22 = Time.time;
             }
             else
             {
@@ -66,6 +80,15 @@ namespace SF_FPSController
             if (!characterController.isGrounded)
             {
                 moveDirection.y -= gravity * Time.deltaTime;
+            }
+            else
+            {
+                if (isJump && jumptime22+jumptime<Time.time)
+                {
+                    isJump = false;
+                    animator.SetBool("Jump", isJump);
+
+                }
             }
 
             // Move the controller

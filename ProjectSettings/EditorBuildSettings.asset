@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/ScansFactory/UrbanDistrict/Demo/UrbanDistrict_01_P.unity
-    guid: e6453d2611907ad449c9581f026079bc
+    path: Assets/0Scenes/My_01_P.unity
+    guid: d9b2ac7e4e1f739439c50a9f8d8e0d80
   m_configObjects: {}
