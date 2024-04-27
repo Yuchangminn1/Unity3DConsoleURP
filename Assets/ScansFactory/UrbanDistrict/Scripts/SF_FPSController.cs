@@ -13,9 +13,11 @@ namespace SF_FPSController
         public float jumpSpeed = 8.0f;
         public float gravity = 20.0f;
         public Camera playerCamera;
+        public Camera playerAimCamera;
+
         public GameObject flashlightHolder;
         public float lookSpeed = 2.0f;
-        public float lookXLimit = 45.0f;
+        float lookXLimit = 20.0f;
 
         Animator animator;
 
@@ -32,6 +34,11 @@ namespace SF_FPSController
         float jumptime = 0.1f;
         float jumptime22 = 0.1f;
 
+        //float MouseX = 0;
+        //float MouseY = 0;
+
+        bool isAim = false;
+        RifleAimingIK rifleAimingIK;
         void Start()
         {
             characterController = GetComponent<CharacterController>();
@@ -39,6 +46,7 @@ namespace SF_FPSController
             // Lock cursor
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            rifleAimingIK = GetComponentInChildren<RifleAimingIK>();
         }
 
         void Update()
@@ -67,7 +75,17 @@ namespace SF_FPSController
             {
                 moveDirection.y = movementDirectionY;
             }
+            if(Input.GetMouseButtonDown(1))
+            {
+                isAim = !isAim;
+                animator.SetBool("OnAim", isAim);
+                if (rifleAimingIK)
+                {
+                    rifleAimingIK.isRifleIK = isAim;
+                }
+                playerAimCamera.enabled = isAim;
 
+            }
 
             if (Input.GetKeyDown(KeyCode.F))
             {
@@ -83,7 +101,7 @@ namespace SF_FPSController
             }
             else
             {
-                if (isJump && jumptime22+jumptime<Time.time)
+                if (isJump && jumptime22 + jumptime < Time.time)
                 {
                     isJump = false;
                     animator.SetBool("Jump", isJump);
@@ -97,10 +115,13 @@ namespace SF_FPSController
             // Player and Camera rotation
             if (canMove)
             {
+
                 rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
                 rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
                 playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+                playerAimCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
                 transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+                animator.SetFloat("MouseY", rotationX);
             }
         }
     }
